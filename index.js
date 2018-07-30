@@ -21,8 +21,16 @@ app.get('/email/:nome', (req, res) => {
         return res.status(400).send({mensagem: "Nome é obrigatório"});
     }
     req.db.collection('cadastros').findOne({nome: req.params.nome}, (erro, cadastro) => {
-        return res.send(cadastro);
-    });
+        if(erro){
+            console.log(`erro:${erro}`)
+        }
+        if(cadastro){
+            return res.send(cadastro);    
+        }
+        else{
+            return res.send({});
+        }
+        });
 });
 
 app.post('/email/cadastrar', (req, res) => {
@@ -39,6 +47,21 @@ app.post('/email/cadastrar', (req, res) => {
         }
     });
     
+});
+
+app.post('/email/atualizar', (req, res) => {
+    if(!req.body.nome || !req.body.email){
+        return res.status(400).send({mensagem: "Nome e email são obrigatórios"});
+    }
+
+    req.db.collection('cadastros').updateOne({nome: req.body.nome}, {$set: req.body}, erro => {
+        if(erro){
+            console.log(erro);
+        }
+        else{
+            res.send({mensagem: 'Atualização realizada com sucesso!'});
+        }
+    });
 });
 
 app.delete('/email/:nome', (req, res) => {

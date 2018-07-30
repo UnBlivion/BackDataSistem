@@ -27,6 +27,25 @@ function montarTela(cadastro){
     lista.appendChild(entrada);
 }
 
+function alterarCadastro(cadastro, atualizar=false){
+    let endpoint;
+    if(atualizar){
+        endpoint = 'http://localhost:3000/email/atualizar'
+    }
+    else{
+        endpoint = 'http://localhost:3000/email/cadastrar'
+    }
+    fetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(cadastro),
+        headers: {
+            'Content-type': 'application/json'
+        }
+    }).then(() => {
+        carregar();
+    });
+}
+
 botao.addEventListener('click', () => {
     let cadastro = {
         nome: campoNome.value,
@@ -36,15 +55,17 @@ botao.addEventListener('click', () => {
     campoNome.value = '';
     campoEmail.value = '';
     
-    fetch('http://localhost:3000/email/cadastrar', {
-    method: 'POST',
-    body: JSON.stringify(cadastro),
-    headers: {
-        'Content-type': 'application/json'
-    }
-}).then(() => {
-    carregar();
-});
+    fetch(`http://localhost:3000/email/${cadastro.nome}`).then(resposta => {
+        return resposta.json();
+    }).then(dados => {
+        if(dados.nome){
+            alterarCadastro(cadastro, true);
+        }
+        else{
+            alterarCadastro(cadastro);
+        }
+    });
+
 });
 
 function carregar(){
