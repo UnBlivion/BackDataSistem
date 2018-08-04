@@ -47,6 +47,9 @@ function alterarCadastro(cadastro, atualizar=false){
 }
 
 botao.addEventListener('click', () => {
+    if(campoNome.value === "" || campoEmail.value === ""){
+        alert("seu animal");
+    }
     let cadastro = {
         nome: campoNome.value,
         email: campoEmail.value
